@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+import sys
+import math
+
+def is_prime(n):
+    """Check if a number is prime."""
+    if n < 2:
+        return False
+    if n == 2:
+        return True
+    if n % 2 == 0:
+        return False
+    
+    # Check odd divisors up to square root
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
+        if n % i == 0:
+            return False
+    return True
+
+def find_prime_factors(n):
+    """Find two prime factors of n."""
+    # Handle trivial cases
+    if n < 4:
+        return None
+    
+    # Try potential factors from 2 to sqrt(n)
+    for i in range(2, int(math.sqrt(n)) + 1):
+        # If i is a factor and both i and n/i are prime
+        if n % i == 0:
+            # Check if both factors are prime
+            if is_prime(i) and is_prime(n // i):
+                return (i, n // i)
+    
+    # If no prime factors found
+    return None
+
+def main():
+    # Check if filename is provided
+    if len(sys.argv) < 2:
+        print("Usage: rsa <file>")
+        sys.exit(1)
+    
+    # Read input file
+    try:
+        with open(sys.argv[1], 'r') as file:
+            # Read only the first number
+            n = int(file.readline().strip())
+    except FileNotFoundError:
+        print(f"Error: File {sys.argv[1]} not found")
+        sys.exit(1)
+    except ValueError:
+        print("Error: Invalid number in file")
+        sys.exit(1)
+    
+    # Find and print prime factors
+    factors = find_prime_factors(n)
+    if factors:
+        print(f"{n}={factors[0]}*{factors[1]}")
+    else:
+        # If no prime factors found, print original number
+        print(f"{n}={n}")
+
+if __name__ == "__main__":
+    main()
